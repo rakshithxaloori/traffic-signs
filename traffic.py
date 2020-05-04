@@ -9,7 +9,7 @@ from sklearn.model_selection import train_test_split
 EPOCHS = 10
 IMG_WIDTH = 30
 IMG_HEIGHT = 30
-NUM_CATEGORIES = 43
+NUM_CATEGORIES = 3
 TEST_SIZE = 0.4
 
 
@@ -132,6 +132,7 @@ def get_model():
 
     # Add a hidden layer, with ReLU activation
     model.add(tf.keras.layers.Dense(10, activation="relu"))
+    model.add(tf.keras.layers.Dropout(0.5))
 
     # Add output layer with NUM_CATEGORIES units, with softmax activation
     model.add(tf.keras.layers.Dense(NUM_CATEGORIES, activation="softmax"))
