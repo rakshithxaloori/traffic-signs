@@ -113,6 +113,8 @@ def load_data(data_dir):
     images = [image_label[0] for image_label in image_labels]
     labels = [image_label[1] for image_label in image_labels]
 
+    for image, label in zip(images, labels):
+        print(image, " --- ", label)
     return (images, labels)
 
 
@@ -122,7 +124,24 @@ def get_model():
     `input_shape` of the first layer is `(IMG_WIDTH, IMG_HEIGHT, 3)`.
     The output layer should have `NUM_CATEGORIES` units, one for each category.
     """
-    raise NotImplementedError
+
+    # Create a neural network
+    model = tf.keras.models.Sequential()
+
+    # Add a hidden layer, with ReLU activation
+    model.add(tf.keras.layers.Dense(, input_shape=(IMG_HEIGHT, IMG_WIDTH, 3), activation="relu"))
+
+    # Add output layer with NUM_CATEGORIES units, with sigmoid activation
+    model.add(tf.keras.layers.Dense(NUM_CATEGORIES, activation="sigmoid"))
+
+    # Compile the model
+    model.compile(
+        optimizer="adam",
+        loss="binary_crossentropy",
+        metrics=["accuracy"]
+    )
+
+    return model
 
 
 if __name__ == "__main__":
