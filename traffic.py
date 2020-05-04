@@ -83,23 +83,17 @@ def load_data(data_dir):
             img_tail_label_str = convert_to_five_digit_str(img_tail_label_int)
 
             image_path = data_dir_path + os.sep + str(img_dir) + os.sep + img_head_label_str + "_" + img_tail_label_str + ".ppm"
-            # print(image_path)
-
             image = cv2.imread(image_path)
-            # print(type(image))
             try:
                 # Resize the image and add it to the list
                 resized_image = cv2.resize(src=image, dsize=(IMG_HEIGHT, IMG_WIDTH))
                 # Add the resized image to the list
-                image_labels.append((resized_image, img_dir))
-                # print(img_head_label_str, "_", img_tail_label_str, " -- ", resized_image.shape, " - ", img_dir)
-                # print("-------------------------------")
-
+                image_labels.append((resized_image, str(img_dir)))
+                
                 # Go to the next image
                 img_tail_label_int += 1
 
             except (AttributeError, cv2.error):
-                # print("ERROR")
                 if img_tail_label_int == 0:
                     # End of all heads, so end of the images in the img_dir
                     # Go to next img_dir
@@ -113,15 +107,8 @@ def load_data(data_dir):
     images = [image_label[0] for image_label in image_labels]
     labels = [image_label[1] for image_label in image_labels]
 
-    # Filter the images
-    kernel = np.array([[-1, -1, -1], [-1, 8, -1], [-1, -1, -1]])
-    filtered_images = list()
-    for image in images:
-        # Apply the filter
-        filtered_image = cv2.filter2D(image, -1, kernel)
-        filtered_images.append(filtered_image)
 
-    return (filtered_images, labels)
+    return (images, labels)
 
 
 def get_model():
@@ -134,16 +121,25 @@ def get_model():
     # Create a neural network
     model = tf.keras.models.Sequential()
 
-    # Add a hidden layer, with ReLU activation
-    model.add(tf.keras.layers.Dense(, input_shape=(IMG_HEIGHT, IMG_WIDTH, 3), activation="relu"))
+    # Convolutional layer. Learn 32 filters using a 3x3 kernel
+    model.add(tf.keras.layers.Conv2D(32, (3, 3), activation="relu", input_shape=(IMG_HEIGHT, IMG_WIDTH, 3)))
 
-    # Add output layer with NUM_CATEGORIES units, with sigmoid activation
-    model.add(tf.keras.layers.Dense(NUM_CATEGORIES, activation="sigmoid"))
+    # Max pooling layer, using 2x2 pool size
+    model.add(tf.keras.layers.MaxPooling2D(pool_size=(2, 2)))
+
+    # Flatten units
+    model.add(tf.keras.layers.Flatten())
+
+    # Add a hidden layer, with ReLU activation
+    model.add(tf.keras.layers.Dense(10, activation="relu"))
+
+    # Add output layer with NUM_CATEGORIES units, with softmax activation
+    model.add(tf.keras.layers.Dense(NUM_CATEGORIES, activation="softmax"))
 
     # Compile the model
     model.compile(
         optimizer="adam",
-        loss="binary_crossentropy",
+        loss="categorical_crossentropy",
         metrics=["accuracy"]
     )
 
