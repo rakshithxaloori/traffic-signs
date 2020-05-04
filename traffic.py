@@ -113,9 +113,15 @@ def load_data(data_dir):
     images = [image_label[0] for image_label in image_labels]
     labels = [image_label[1] for image_label in image_labels]
 
-    for image, label in zip(images, labels):
-        print(image, " --- ", label)
-    return (images, labels)
+    # Filter the images
+    kernel = np.array([[-1, -1, -1], [-1, 8, -1], [-1, -1, -1]])
+    filtered_images = list()
+    for image in images:
+        # Apply the filter
+        filtered_image = cv2.filter2D(image, -1, kernel)
+        filtered_images.append(filtered_image)
+
+    return (filtered_images, labels)
 
 
 def get_model():
