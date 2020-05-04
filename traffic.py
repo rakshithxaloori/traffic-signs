@@ -131,7 +131,7 @@ def get_model():
     model.add(tf.keras.layers.Flatten())
 
     # Add a hidden layer, with ReLU activation
-    model.add(tf.keras.layers.Dense(10, activation="relu"))
+    model.add(tf.keras.layers.Dense(50, activation="relu"))
     model.add(tf.keras.layers.Dropout(0.5))
 
     # Add output layer with NUM_CATEGORIES units, with softmax activation
