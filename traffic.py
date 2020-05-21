@@ -131,7 +131,7 @@ def get_model():
     model.add(tf.keras.layers.Flatten())
 
     # Add a hidden layer, with ReLU activation
-    model.add(tf.keras.layers.Dense(1000, activation="relu"))
+    model.add(tf.keras.layers.Dense(800, activation="relu"))
     model.add(tf.keras.layers.Dropout(0.5))
 
     # Add a hidden layer, with ReLU activation
